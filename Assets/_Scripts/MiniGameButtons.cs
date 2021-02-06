@@ -12,11 +12,11 @@ public class MiniGameButtons : MonoBehaviour
 
     public void OnMiningButtonPressed()
     {
-        gameManager.scanMode = false;
+        gameManager.ToggleScanMode(false);
     }
 
     public void OnScanButtonPressed()
     {
-        gameManager.scanMode = true;
+        gameManager.ToggleScanMode(true);
     }
 }

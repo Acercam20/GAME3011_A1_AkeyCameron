@@ -63,6 +63,7 @@ public class TileButtonBehaviour : MonoBehaviour
                 GetComponent<BoxCollider2D>().size = startingSize;
                 isScanned = true;
                 gameManager.MineResources(resourceValue);
+                resourceValue = 0;
                 isMined = true;
             }
             else

@@ -12,6 +12,11 @@ public class GameManager : MonoBehaviour
     public Text resourcesCollectedText;
     public Text minesRemainingText;
     public Text scansRemainingText;
+    public Button scanButton;
+    public Button mineButton;
+    public Image buttonHighlight;
+    public Image endImage;
+    public Text endText;
     public int numberOfScans;
     public int maxNumberOfScans = 5;
     public int numberOfMines;
@@ -21,26 +26,35 @@ public class GameManager : MonoBehaviour
     public int tileColLength;
     public GameObject tilePrefab;
     private List<Vector2> maxResourceLocations = new List<Vector2> { };
-    
+
     void Start()
     {
         VariableCheck();
         InstatiateTiles();
         miningGameCanvas.SetActive(false);
+        endImage.enabled = false;
+        endText.enabled = false;
     }
 
     void Update()
     {
-        
+        if (numberOfMines == 0)
+        {
+            endImage.enabled = true;
+            endImage.transform.SetAsLastSibling();
+            endText.enabled = true;
+            endText.transform.SetAsLastSibling();
+            endText.text = "Alertium Obtained: " + resourcesCollected.ToString();
+        }
     }
 
     public void MineResources(float amountToAdd)
     {
-        if (amountToAdd == -1)
+        if (amountToAdd < 0)
         {
             Debug.Log("No");
         }
-        else if (numberOfMines > 0)
+        if (numberOfMines > 0)
         {
             resourcesCollected = resourcesCollected + amountToAdd;
             resourcesCollectedText.text = resourcesCollected.ToString();
@@ -71,6 +85,18 @@ public class GameManager : MonoBehaviour
             miningGameToggled = true;
         }
     }
+    public void ToggleScanMode(bool on)
+    {
+        scanMode = on;
+        if (scanMode)
+        {
+            buttonHighlight.transform.position = scanButton.transform.position;
+        }
+        else
+        {
+            buttonHighlight.transform.position = mineButton.transform.position;
+        }
+    }
 
     void VariableCheck()
     {
@@ -85,6 +111,7 @@ public class GameManager : MonoBehaviour
             tileRowLength = 0;
         if (tileColLength < 0)
             tileColLength = 0;
+
     }
 
     void InstatiateTiles()
