@@ -19,4 +19,9 @@ public class MiniGameButtons : MonoBehaviour
     {
         gameManager.ToggleScanMode(true);
     }
+
+    public void OnStopButtonPressed()
+    {
+        gameManager.StopBar();
+    }
 }
