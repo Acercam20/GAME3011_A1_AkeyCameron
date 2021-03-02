@@ -25,10 +25,21 @@ public class GameManager : MonoBehaviour
     public int tileRowLength;
     public int tileColLength;
     public GameObject tilePrefab;
-    public GameObject stopBar1, stopBar2, stopBar3;
-    public Text lockPickStatusText;
     private List<Vector2> maxResourceLocations = new List<Vector2> { };
+
+    //Lockpick Game
+    public GameObject stopBar1, stopBar2, stopBar3, stopBar4, stopBar5;
+    public GameObject targetZone1, targetZone2, targetZone3, targetZone4, targetZone5;
+    public GameObject centreTarget;
+    public Text lockPickStatusText;
+    public int barDifficulty;
+    public int maxAttempts = 5;
+    public int currentAttempts = 5;
+    public float acceptedRange = 15;
     private int barNum = 1;
+    public Text attemptsText;
+    public List<GameObject> highDifficultyObjects;
+    public List<Vector3> oldPos;
 
     void Start()
     {
@@ -37,6 +48,19 @@ public class GameManager : MonoBehaviour
         miningGameCanvas.SetActive(false);
         endImage.enabled = false;
         endText.enabled = false;
+        if (barDifficulty == 3)
+        {
+            targetZone1.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone2.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone3.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone4.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone5.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+        }
+        oldPos.Add(targetZone1.transform.position);
+        oldPos.Add(targetZone2.transform.position);
+        oldPos.Add(targetZone3.transform.position);
+        oldPos.Add(targetZone4.transform.position);
+        oldPos.Add(targetZone5.transform.position);
     }
 
     void Update()
@@ -174,6 +198,41 @@ public class GameManager : MonoBehaviour
             stopBar3.GetComponent<StopBarBehaviour>().isRotating = false;
             if (CheckBar(3))
             {
+                if (barDifficulty == 1)
+                {
+                    Debug.Log("Victory!");
+                    lockPickStatusText.text = "Lock Picked!";
+                    Invoke("ResetBars", 2);
+                }
+                else
+                {
+                    barNum = 4;
+                }
+            }
+            else
+            {
+                ResetBars(false);
+            }
+
+        }
+        else if (barNum == 4)
+        {
+            stopBar4.GetComponent<StopBarBehaviour>().isRotating = false;
+            if (CheckBar(4))
+            {
+                barNum = 5;
+            }
+            else
+            {
+                ResetBars(false);
+            }
+
+        }
+        else if (barNum == 5)
+        {
+            stopBar5.GetComponent<StopBarBehaviour>().isRotating = false;
+            if (CheckBar(5))
+            {
                 Debug.Log("Victory!");
                 lockPickStatusText.text = "Lock Picked!";
                 Invoke("ResetBars", 2);
@@ -190,27 +249,84 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool CheckBar(int i)
+    public void SetDifficulty(int i)
+    {
+        barDifficulty = i;
+        if (i == 1)
+        {
+            for (int d = 0; d < highDifficultyObjects.Count; d++)
+            {
+                highDifficultyObjects[d].SetActive(false);
+            }
+        }
+        else if (i == 2)
+        {
+            for (int d = 0; d < highDifficultyObjects.Count; d++)
+            {
+                highDifficultyObjects[d].SetActive(true);
+            }
+            targetZone1.transform.eulerAngles = new Vector3(0, 0, 0);
+            targetZone2.transform.eulerAngles = new Vector3(0, 0, 0);
+            targetZone3.transform.eulerAngles = new Vector3(0, 0, 0);
+            targetZone4.transform.eulerAngles = new Vector3(0, 0, 0);
+            targetZone5.transform.eulerAngles = new Vector3(0, 0, 0);
+
+            targetZone1.transform.position = oldPos[0];
+            targetZone2.transform.position = oldPos[1];
+            targetZone3.transform.position = oldPos[2];
+            targetZone4.transform.position = oldPos[3];
+            targetZone5.transform.position = oldPos[4];
+        }
+        else if (i == 3)
+        {
+            for (int d = 0; d < highDifficultyObjects.Count; d++)
+            {
+                highDifficultyObjects[d].SetActive(true);
+            }
+            targetZone4.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone5.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone1.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone2.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone3.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+        }
+    }
+
+    public bool CheckBar(int i)
     {
         bool toReturn = false;
         if (i == 1)
         {
-            Debug.Log(stopBar1.transform.rotation.z);
-            if (stopBar1.transform.rotation.z > -0.15 && stopBar1.transform.rotation.z < 0.15)
+            Debug.Log(stopBar1.transform.eulerAngles.z.ToString());
+            Debug.Log(targetZone1.transform.eulerAngles.z.ToString());
+            if (stopBar1.GetComponent<StopBarBehaviour>().inZone) //stopBar1.transform.eulerAngles.z > targetZone1.transform.eulerAngles.z - acceptedRange && stopBar1.transform.eulerAngles.z < targetZone1.transform.eulerAngles.z + acceptedRange
             {
                 toReturn = true;
             }
         }
         else if (i == 2)
         {
-            if (stopBar2.transform.rotation.z > -0.15 && stopBar2.transform.rotation.z < 0.15)
+            if (stopBar2.GetComponent<StopBarBehaviour>().inZone) //stopBar1.transform.eulerAngles.z > targetZone1.transform.eulerAngles.z - acceptedRange && stopBar1.transform.eulerAngles.z < targetZone1.transform.eulerAngles.z + acceptedRange
             {
                 toReturn = true;
             }
         }
         else if (i == 3)
         {
-            if (stopBar3.transform.rotation.z > -0.15 && stopBar3.transform.rotation.z < 0.15)
+            if (stopBar3.GetComponent<StopBarBehaviour>().inZone) //stopBar3.transform.eulerAngles.z > targetZone3.transform.eulerAngles.z - acceptedRange && stopBar3.transform.eulerAngles.z < targetZone3.transform.eulerAngles.z + acceptedRange
+            {
+                toReturn = true;
+            }
+        }
+        else if (i == 4)
+        {
+            if (stopBar4.GetComponent<StopBarBehaviour>().inZone) //stopBar4.transform.eulerAngles.z > targetZone4.transform.eulerAngles.z - acceptedRange && stopBar4.transform.eulerAngles.z < targetZone4.transform.eulerAngles.z + acceptedRange
+            {
+                toReturn = true;
+            }
+        }
+        else if (i == 5)
+        {
+            if (stopBar5.GetComponent<StopBarBehaviour>().inZone) //stopBar5.transform.eulerAngles.z > targetZone5.transform.eulerAngles.z - acceptedRange && stopBar5.transform.eulerAngles.z < targetZone5.transform.eulerAngles.z + acceptedRange
             {
                 toReturn = true;
             }
@@ -223,17 +339,42 @@ public class GameManager : MonoBehaviour
         Debug.Log("ResetBars Called");
         if (!victoryReset)
         {
-            lockPickStatusText.text = "Lock Pick Failed";
+            currentAttempts--;
+            attemptsText.text = "Attempts Remaining: " + currentAttempts.ToString();
+            if (currentAttempts <= 0)
+            {
+                lockPickStatusText.text = "Lock Pick Failed";
+                currentAttempts = maxAttempts;
+            }
         }
-        Invoke("ResetStatusText", 2);
+        else
+        {
+            currentAttempts = maxAttempts;
+            attemptsText.text = "Attempts Remaining: " + currentAttempts.ToString();
+        }
+        Invoke("ResetStatusText", 3);
         stopBar1.GetComponent<StopBarBehaviour>().isRotating = true;
         stopBar2.GetComponent<StopBarBehaviour>().isRotating = true;
         stopBar3.GetComponent<StopBarBehaviour>().isRotating = true;
+        if (!(barDifficulty == 1))
+        {
+            stopBar4.GetComponent<StopBarBehaviour>().isRotating = true;
+            stopBar5.GetComponent<StopBarBehaviour>().isRotating = true;
+        }
         barNum = 1;
+        if (barDifficulty == 3)
+        {
+            targetZone4.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone5.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone1.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone2.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+            targetZone3.transform.RotateAround(centreTarget.transform.position, Vector3.forward, Random.Range(0, 360));
+        }
     }
 
     public void ResetStatusText()
     {
         lockPickStatusText.text = "";
+        attemptsText.text = "Attempts Remaining: " + currentAttempts.ToString();
     }
 }
