@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
     public Text attemptsText;
     public List<GameObject> highDifficultyObjects;
     public List<Vector3> oldPos;
+    public bool lockToggle = false;
+    public GameObject lockCanvas;
 
     void Start()
     {
@@ -61,6 +63,9 @@ public class GameManager : MonoBehaviour
         oldPos.Add(targetZone3.transform.position);
         oldPos.Add(targetZone4.transform.position);
         oldPos.Add(targetZone5.transform.position);
+
+        lockCanvas.SetActive(false);
+        lockToggle = false;
     }
 
     void Update()
@@ -99,6 +104,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ToggleLockGame()
+    {
+        if (lockToggle)
+        {
+            lockCanvas.SetActive(false);
+            lockToggle = false;
+        }
+        else
+        {
+            lockCanvas.SetActive(true);
+            lockToggle = true;
+        }
+    }
     public void ToggleMiningGame()
     {
         if (miningGameToggled)

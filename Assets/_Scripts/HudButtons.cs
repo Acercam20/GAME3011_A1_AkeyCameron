@@ -9,6 +9,11 @@ public class HudButtons : MonoBehaviour
         GameObject.FindWithTag("GameController").GetComponent<GameManager>().ToggleMiningGame();
     }
 
+    public void OnLockPickingGame()
+    {
+        GameObject.FindWithTag("GameController").GetComponent<GameManager>().ToggleLockGame();
+    }
+
     public void Difficulty1Button()
     {
         GameObject.FindWithTag("GameController").GetComponent<GameManager>().SetDifficulty(1);

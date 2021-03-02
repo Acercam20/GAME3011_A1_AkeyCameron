@@ -2249,7 +2249,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 887193617}
         m_TargetAssemblyTypeName: HudButtons, Assembly-CSharp
-        m_MethodName: OnMiningGameButtonPressed
+        m_MethodName: OnLockPickingGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3830,7 +3830,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1238986037
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4902,6 +4902,8 @@ MonoBehaviour:
   - {fileID: 1659580641}
   - {fileID: 1003656845}
   oldPos: []
+  lockToggle: 1
+  lockCanvas: {fileID: 928965188}
 --- !u!4 &1660275605
 Transform:
   m_ObjectHideFlags: 0
@@ -4934,7 +4936,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1688480918
 MonoBehaviour:
   m_ObjectHideFlags: 0
