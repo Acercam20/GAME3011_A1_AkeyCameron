@@ -46,17 +46,55 @@ public class GameManager : MonoBehaviour
     public GameObject lockCanvas;
 
     //Match 3 Game //All of these. Probably don't need any of them.
-    public static GameManager instance;
-    public GameObject faderObj;
-    public Image faderImg;
-    public bool gameOver = false;
-    public float fadeSpeed = .02f;
-    private Color fadeTransparency = new Color(0, 0, 0, .04f);
-    private string currentScene;
-    private AsyncOperation async;
+    public int matchDifficulty = 0; // 0 = easy, 1 = medium, 2 = hard
+    public float remainingTime;
+    public float maxTime;
+    public int remainingMoves;
+    public int maxMoves;
+    public bool bombsEnabled = false, blockTilesEnabled = false;
+    private float timer = 0;
+    public Text timerText;
+    public Text difficultyText;
+    public Text movesText;
+    public Text tilesClearedText;
 
     void Start()
     {
+        if (matchDifficulty == 0)
+        {
+            maxMoves = 200;
+            remainingMoves = maxMoves;
+            maxTime = 300;
+            remainingTime = maxTime;
+        }
+        else if (matchDifficulty == 1)
+        {
+            maxMoves = 150;
+            remainingMoves = maxMoves;
+            maxTime = 180;
+            remainingTime = maxTime;
+            bombsEnabled = true;
+        }
+        else if (matchDifficulty == 2)
+        {
+            maxMoves = 100;
+            remainingMoves = maxMoves;
+            maxTime = 60;
+            remainingTime = maxTime;
+            bombsEnabled = true;
+            blockTilesEnabled = true;
+        }
+        else
+        {
+            matchDifficulty = 0;
+            maxMoves = 200;
+            remainingMoves = maxMoves;
+            maxTime = 300;
+            remainingTime = maxTime;
+        }
+        movesText.text = "Moves Left: \r" + remainingMoves;
+
+
         VariableCheck();
         InstatiateTiles();
         miningGameCanvas.SetActive(false);
@@ -91,15 +129,18 @@ public class GameManager : MonoBehaviour
             endText.text = "Alertium Obtained: " + resourcesCollected.ToString();
         }
 
-
+        timer += Time.deltaTime;
+        remainingTime = maxTime - Mathf.FloorToInt(timer % 60);
+        timerText.text = "Timer: \r" + remainingTime;
+        if (remainingTime <= 0 || remainingMoves <= 0)
+        {
+            MatchGameOver();
+        }
     }
 
-    public string CurrentSceneName //this
+    public void MatchGameOver()
     {
-        get
-        {
-            return currentScene;
-        }
+        Debug.Log("Game Over");
     }
 
     public void MineResources(float amountToAdd)

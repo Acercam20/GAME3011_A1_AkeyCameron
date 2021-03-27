@@ -55,7 +55,7 @@ public class Tile : MonoBehaviour
 			}
 			else
 			{
-				if (GetAllAdjacentTiles().Contains(previousSelected.gameObject) || true)
+				if (GetAllAdjacentTiles().Contains(previousSelected.gameObject))
 				{ // Is it an adjacent tile?
 					SwapSprite(previousSelected.render);
 					previousSelected.ClearAllMatches();
@@ -83,14 +83,18 @@ public class Tile : MonoBehaviour
 		render.sprite = tempSprite;
 		soundManager.PlaySound(soundManager.MoveTile);
 		//GUIManager.instance.MoveCounter--; // Add this line here
+		GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves--;
+		GameObject.FindWithTag("GameController").GetComponent<GameManager>().movesText.text = "Moves Left: \r" + GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves;
 	}
 
 	private GameObject GetAdjacent(Vector2 castDir)
 	{
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, castDir);
+		RaycastHit2D hit = Physics2D.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), castDir);
 		if (hit.collider != null)
 		{
+			//Debug.Log("X: " + hit.collider.gameObject.transform.position.x + "Y: " + hit.collider.gameObject.transform.position.y);
 			return hit.collider.gameObject;
+			//Destroy(hit.collider.gameObject);
 		}
 		return null;
 	}
