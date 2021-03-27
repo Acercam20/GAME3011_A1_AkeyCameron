@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    //Mining Game
     public bool scanMode = true;
     public bool miningGameToggled = false;
     public float resourcesCollected = 0;
@@ -43,6 +45,16 @@ public class GameManager : MonoBehaviour
     public bool lockToggle = false;
     public GameObject lockCanvas;
 
+    //Match 3 Game //All of these. Probably don't need any of them.
+    public static GameManager instance;
+    public GameObject faderObj;
+    public Image faderImg;
+    public bool gameOver = false;
+    public float fadeSpeed = .02f;
+    private Color fadeTransparency = new Color(0, 0, 0, .04f);
+    private string currentScene;
+    private AsyncOperation async;
+
     void Start()
     {
         VariableCheck();
@@ -77,6 +89,16 @@ public class GameManager : MonoBehaviour
             endText.enabled = true;
             endText.transform.SetAsLastSibling();
             endText.text = "Alertium Obtained: " + resourcesCollected.ToString();
+        }
+
+
+    }
+
+    public string CurrentSceneName //this
+    {
+        get
+        {
+            return currentScene;
         }
     }
 
