@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+	
 	private static Color selectedColor = new Color(.5f, .5f, .5f, 1.0f);
 	private static Tile previousSelected = null;
 
@@ -54,7 +55,7 @@ public class Tile : MonoBehaviour
 			}
 			else
 			{
-				if (GetAllAdjacentTiles().Contains(previousSelected.gameObject))
+				if (GetAllAdjacentTiles().Contains(previousSelected.gameObject) || true)
 				{ // Is it an adjacent tile?
 					SwapSprite(previousSelected.render);
 					previousSelected.ClearAllMatches();
