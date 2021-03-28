@@ -16,7 +16,6 @@ public class BoardManager : MonoBehaviour
 	void Start()
 	{
 		instance = GetComponent<BoardManager>();
-
 		Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
 		CreateBoard(offset.x, offset.y);
 	}
@@ -28,8 +27,8 @@ public class BoardManager : MonoBehaviour
 		float startX = transform.position.x;
 		float startY = transform.position.y;
 
-		Sprite[] previousLeft = new Sprite[ySize]; // Add this line
-		Sprite previousBelow = null; // Add this line
+		Sprite[] previousLeft = new Sprite[ySize]; 
+		Sprite previousBelow = null; 
 
 		for (int x = 0; x < xSize; x++)
 		{
@@ -37,7 +36,7 @@ public class BoardManager : MonoBehaviour
 			{
 				GameObject newTile = Instantiate(tile, new Vector3(startX + (xOffset * x), startY + (yOffset * y), 0), tile.transform.rotation);
 				tiles[x, y] = newTile;
-				newTile.transform.parent = transform; // Add this line
+				newTile.transform.parent = transform; 
 
 				List<Sprite> possibleCharacters = new List<Sprite>();
 				possibleCharacters.AddRange(characters);
@@ -66,7 +65,6 @@ public class BoardManager : MonoBehaviour
 				}
 			}
 		}
-
 		for (int x = 0; x < xSize; x++)
 		{
 			for (int y = 0; y < ySize; y++)
@@ -94,7 +92,6 @@ public class BoardManager : MonoBehaviour
 
 		for (int i = 0; i < nullCount; i++)
 		{
-			//GUIManager.instance.Score += 50; // Add this line here
 			yield return new WaitForSeconds(shiftDelay);
 			for (int k = 0; k < renders.Count - 1; k++)
 			{
@@ -122,7 +119,6 @@ public class BoardManager : MonoBehaviour
 		{
 			possibleCharacters.Remove(tiles[x, y - 1].GetComponent<SpriteRenderer>().sprite);
 		}
-
 		return possibleCharacters[Random.Range(0, possibleCharacters.Count)];
 	}
 }

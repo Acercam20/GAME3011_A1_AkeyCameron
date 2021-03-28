@@ -7,12 +7,11 @@ public class Tile : MonoBehaviour
 	
 	private static Color selectedColor = new Color(.5f, .5f, .5f, 1.0f);
 	private static Tile previousSelected = null;
-
 	private SpriteRenderer render;
 	private bool isSelected = false;
-
 	private Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
 	private SoundManager soundManager;
+	private bool matchFound = false;
 
 	void Awake()
 	{
@@ -20,52 +19,48 @@ public class Tile : MonoBehaviour
 		soundManager = GameObject.FindWithTag("SoundManager").GetComponent<SoundManager>();
 	}
 
-	private void Select()
+	private void Select(bool b)
 	{
-		isSelected = true;
-		render.color = selectedColor;
-		previousSelected = gameObject.GetComponent<Tile>();
-		soundManager.PlaySound(soundManager.SelectTile);
-	}
-
-	private void Deselect()
-	{
-		isSelected = false;
-		render.color = Color.white;
-		previousSelected = null;
+		if(b) 
+		{
+			isSelected = true;
+			render.color = selectedColor;
+			previousSelected = gameObject.GetComponent<Tile>();
+			soundManager.PlaySound(soundManager.SelectTile);
+		}
+		else
+        {
+			isSelected = false;
+			render.color = Color.white;
+			previousSelected = null;
+		}
 	}
 
 	void OnMouseDown()
 	{
-		// Not Selectable conditions
-		if (render.sprite == null || BoardManager.instance.IsShifting)
-		{
-			return;
-		}
-
 		if (isSelected)
-		{ // Is it already selected?
-			Deselect();
+		{
+			Select(false);
 		}
 		else
 		{
 			if (previousSelected == null)
-			{ // Is it the first tile selected?
-				Select();
+			{
+				Select(true);
 			}
 			else
 			{
 				if (GetAllAdjacentTiles().Contains(previousSelected.gameObject))
-				{ // Is it an adjacent tile?
+				{
 					SwapSprite(previousSelected.render);
 					previousSelected.ClearAllMatches();
-					previousSelected.Deselect();
+					previousSelected.Select(false);
 					ClearAllMatches();
 				}
 				else
 				{
-					previousSelected.GetComponent<Tile>().Deselect();
-					Select();
+					previousSelected.GetComponent<Tile>().Select(false);
+					Select(true);
 				}
 			}
 		}
@@ -77,12 +72,10 @@ public class Tile : MonoBehaviour
 		{
 			return;
 		}
-
 		Sprite tempSprite = render2.sprite;
 		render2.sprite = render.sprite;
 		render.sprite = tempSprite;
 		soundManager.PlaySound(soundManager.MoveTile);
-		//GUIManager.instance.MoveCounter--; // Add this line here
 		GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves--;
 		GameObject.FindWithTag("GameController").GetComponent<GameManager>().movesText.text = GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves.ToString();
 	}
@@ -92,9 +85,7 @@ public class Tile : MonoBehaviour
 		RaycastHit2D hit = Physics2D.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), castDir);
 		if (hit.collider != null)
 		{
-			//Debug.Log("X: " + hit.collider.gameObject.transform.position.x + "Y: " + hit.collider.gameObject.transform.position.y);
 			return hit.collider.gameObject;
-			//Destroy(hit.collider.gameObject);
 		}
 		return null;
 	}
@@ -139,11 +130,12 @@ public class Tile : MonoBehaviour
 		}
 	}
 
-	private bool matchFound = false;
 	public void ClearAllMatches()
 	{
 		if (render.sprite == null)
+        {
 			return;
+		}
 
 		ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
 		ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
@@ -151,8 +143,8 @@ public class Tile : MonoBehaviour
 		{
 			render.sprite = null;
 			matchFound = false;
-			StopCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
-			StartCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
+			StopCoroutine(BoardManager.instance.FindNullTiles()); 
+			StartCoroutine(BoardManager.instance.FindNullTiles()); 
 			soundManager.PlaySound(soundManager.ClearTile);
 		}
 	}
