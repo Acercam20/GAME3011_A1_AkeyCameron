@@ -62,8 +62,12 @@ public class GameManager : MonoBehaviour
     public GameObject match3Object;
     public bool resetBool = false;
     public bool match3Active = true;
+
+    public Text victoryText;
+    public GameObject endScreenObject;
     void Start()
     {
+        endScreenObject.SetActive(false);
         matchDifficulty = GameObject.FindWithTag("Tracker").GetComponent<DifficultyTracker>().difficulty;
 
         if (matchDifficulty == 0)
@@ -169,13 +173,14 @@ public class GameManager : MonoBehaviour
 
     public void MatchOver(bool win)
     {
+        endScreenObject.SetActive(true);
         if (win)
         {
-            Debug.Log("You Win!");
+            victoryText.text = "Victory!";
         }
         else
         {
-            Debug.Log("Game Over");
+            victoryText.text = "Defeat";
         }
     }
 

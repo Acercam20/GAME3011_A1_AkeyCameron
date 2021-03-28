@@ -50,4 +50,15 @@ public class DifficultyButton : MonoBehaviour
         }
         
     }
+
+    public void PlayAgain()
+    {
+        GameObject.FindWithTag("GameController").GetComponent<GameManager>().endScreenObject.SetActive(false);
+        GameObject.FindWithTag("GameController").GetComponent<GameManager>().resetBool = true;
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 }
