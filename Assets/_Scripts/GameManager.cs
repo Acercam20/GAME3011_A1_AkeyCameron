@@ -51,21 +51,29 @@ public class GameManager : MonoBehaviour
     public float maxTime;
     public int remainingMoves;
     public int maxMoves;
+    public int tilesCleared = 0;
+    public int tilesGoal;
     public bool bombsEnabled = false, blockTilesEnabled = false;
     private float timer = 0;
     public Text timerText;
     public Text difficultyText;
     public Text movesText;
     public Text tilesClearedText;
-
+    public GameObject match3Object;
+    public bool resetBool = false;
+    public bool match3Active = true;
     void Start()
     {
+        matchDifficulty = GameObject.FindWithTag("Tracker").GetComponent<DifficultyTracker>().difficulty;
+
         if (matchDifficulty == 0)
         {
             maxMoves = 200;
             remainingMoves = maxMoves;
             maxTime = 300;
             remainingTime = maxTime;
+            tilesGoal = 100;
+            difficultyText.text = "Easy";
         }
         else if (matchDifficulty == 1)
         {
@@ -74,6 +82,8 @@ public class GameManager : MonoBehaviour
             maxTime = 180;
             remainingTime = maxTime;
             bombsEnabled = true;
+            tilesGoal = 100;
+            difficultyText.text = "Medium";
         }
         else if (matchDifficulty == 2)
         {
@@ -83,6 +93,8 @@ public class GameManager : MonoBehaviour
             remainingTime = maxTime;
             bombsEnabled = true;
             blockTilesEnabled = true;
+            tilesGoal = 100;
+            difficultyText.text = "Hard";
         }
         else
         {
@@ -91,9 +103,11 @@ public class GameManager : MonoBehaviour
             remainingMoves = maxMoves;
             maxTime = 300;
             remainingTime = maxTime;
+            tilesGoal = 100;
+            difficultyText.text = "Easy";
         }
-        movesText.text = "Moves Left: \r" + remainingMoves;
-
+        movesText.text = remainingMoves.ToString();
+        tilesClearedText.text = "0";
 
         VariableCheck();
         InstatiateTiles();
@@ -120,6 +134,12 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (resetBool)
+        {
+            resetBool = false;
+            SceneManager.LoadScene("SampleScene");
+        }
+
         if (numberOfMines == 0)
         {
             endImage.enabled = true;
@@ -130,17 +150,33 @@ public class GameManager : MonoBehaviour
         }
 
         timer += Time.deltaTime;
-        remainingTime = maxTime - Mathf.FloorToInt(timer % 60);
+        //remainingTime = maxTime - Mathf.FloorToInt(timer % 60);
+        if (Mathf.FloorToInt(timer % 60) == 1)
+        {
+            timer = 0;
+            remainingTime--;
+        }
         timerText.text = "Timer: \r" + remainingTime;
         if (remainingTime <= 0 || remainingMoves <= 0)
         {
-            MatchGameOver();
+            MatchOver(false);
+        }
+        if (tilesCleared >= tilesGoal)
+        {
+            MatchOver(true);
         }
     }
 
-    public void MatchGameOver()
+    public void MatchOver(bool win)
     {
-        Debug.Log("Game Over");
+        if (win)
+        {
+            Debug.Log("You Win!");
+        }
+        else
+        {
+            Debug.Log("Game Over");
+        }
     }
 
     public void MineResources(float amountToAdd)

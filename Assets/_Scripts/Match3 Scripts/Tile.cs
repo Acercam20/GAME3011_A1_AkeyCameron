@@ -84,7 +84,7 @@ public class Tile : MonoBehaviour
 		soundManager.PlaySound(soundManager.MoveTile);
 		//GUIManager.instance.MoveCounter--; // Add this line here
 		GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves--;
-		GameObject.FindWithTag("GameController").GetComponent<GameManager>().movesText.text = "Moves Left: \r" + GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves;
+		GameObject.FindWithTag("GameController").GetComponent<GameManager>().movesText.text = GameObject.FindWithTag("GameController").GetComponent<GameManager>().remainingMoves.ToString();
 	}
 
 	private GameObject GetAdjacent(Vector2 castDir)
@@ -130,7 +130,11 @@ public class Tile : MonoBehaviour
 			for (int i = 0; i < matchingTiles.Count; i++)
 			{
 				matchingTiles[i].GetComponent<SpriteRenderer>().sprite = null;
+				GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesCleared++;
+				GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesClearedText.text = GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesCleared.ToString();
 			}
+			GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesCleared++;
+			GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesClearedText.text = GameObject.FindWithTag("GameController").GetComponent<GameManager>().tilesCleared.ToString();
 			matchFound = true;
 		}
 	}
